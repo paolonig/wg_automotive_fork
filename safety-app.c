@@ -66,7 +66,7 @@ int main(void)
 	// creating the communication pipe
 	const char *Pipe = "/tmp/safety-signal-source_to_safety-app";
 
-	printf("here I am, listening to a pipe\n");
+	//printf("here I am, listening to a pipe\n");
 	mkfifo(Pipe, 0666);
 	int fd = open(Pipe, O_RDONLY);
 
@@ -82,9 +82,9 @@ int main(void)
 
 	while (1) {
 		if (read(fd, Message, 6) > 0) {
-			printf("Received Message:%i %i %i %i %i %i\n", Message[0], Message[1], Message[2], Message[3], Message[4], Message[5]);
+			//printf("Received Message:%i %i %i %i %i %i\n", Message[0], Message[1], Message[2], Message[3], Message[4], Message[5]);
 			if (do_E2Echeck(Message)) {
-				printf("%s\n", Message);
+				//printf("%s\n", Message);
 			} else {
 				printf("What a mess!, SAFESTATE\n");
 				// could just kill the qt app to get the safe state black screen
@@ -107,7 +107,7 @@ int main(void)
 		int sleeptime = 1000000;
 
 		usleep(sleeptime);
-		printf("here I am, having waited for %f seconds\n", sleeptime / 1000000.0);
+		//printf("here I am, having waited for %f seconds\n", sleeptime / 1000000.0);
 		fflush(NULL);
 	}
 	//close file again
