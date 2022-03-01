@@ -34,19 +34,19 @@ bool do_E2Echeck(unsigned char Message[6])
 	unsigned char computed_parity = (Message[0]+Message[1]+Message[2]+Message[3]+Message[4])%256;
 
 	if (computed_parity != parity) {
-		printf("Parity miss");
+		printf("Parity miss"); /* optional */
 		return false;
 	}
 
 	//Message counter too low
 	if (count < Message_counter) {
-		printf("Message Counter too low, expected %i, received %i\n", Message_counter, count);
+		printf("Message Counter too low, expected %i, received %i\n", Message_counter, count); /* optional */
 		return false;
 	}
 
 	//Message counter too large, i.e. messages got lost inbetween
 	if (count >= Message_counter+2) {
-		printf("Message Counter too big, expected %i, received %i\n", Message_counter, count);
+		printf("Message Counter too big, expected %i, received %i\n", Message_counter, count); /* optional */
 		Message_counter = count;
 		return false;
 	}
@@ -78,7 +78,7 @@ int main(void)
 		write_wdt = true;
 	ret = ioctl(wdt, WDIOC_SETTIMEOUT, &timeout);
 	if (ret)
-		perror("ioctl");
+		perror("ioctl"); /* optional */
 
 	while (1) {
 		if (read(fd, Message, 6) > 0) {
@@ -86,19 +86,19 @@ int main(void)
 			if (do_E2Echeck(Message)) {
 				//printf("%s\n", Message);
 			} else {
-				printf("What a mess!, SAFESTATE\n");
+				printf("What a mess!, SAFESTATE\n"); /* optional */
 				// could just kill the qt app to get the safe state black screen
 				// killall afbd-cluster-gauges
 				// does the trick from the shell, lets try to do that from here yep, works
 				// system("killall afbd-cluster-gauges");
 				// Command QT app to do safe state display
-				system("cansend can0 021#0000000000000080");
+				system("cansend can0 021#0000000000000080"); /* optional */
 				write_wdt = false;
 			}
 			if (Message[0] == 0) {
 				// Signal source triggered safe state
-				printf("SAFESTATE (as commanded by signal source)\n");
-				system("cansend can0 021#0000000000000080");
+				printf("SAFESTATE (as commanded by signal source)\n"); /* optional */
+				system("cansend can0 021#0000000000000080"); /* optional */
 				write_wdt = false;
 			}
 			if (write_wdt)
@@ -111,7 +111,7 @@ int main(void)
 		fflush(NULL);
 	}
 	//close file again
-	close(fd);
-	close(wdt);
+	close(fd); /* never invoked during safe operation */
+	close(wdt); /* never invoked during safe operation */
 	return 0;
 }
